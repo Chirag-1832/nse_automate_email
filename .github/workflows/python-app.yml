@@ -1,0 +1,30 @@
+name: NSE Daily Email
+
+on:
+  schedule:
+    # Runs every day at 03:25 UTC = 08:55 AM IST
+    - cron: '25 3 * * *'
+  workflow_dispatch: # Allows manual run
+
+jobs:
+  send_nse_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python nse_report.py
